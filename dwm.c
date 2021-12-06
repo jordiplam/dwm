@@ -1265,14 +1265,35 @@ resize(Client *c, int x, int y, int w, int h, int interact)
 void
 resizeclient(Client *c, int x, int y, int w, int h)
 {
+	unsigned int n, mask;
+	Client *nc;
+	Layout *lt;
 	XWindowChanges wc;
 
-	c->oldx = c->x; c->x = wc.x = x;
-	c->oldy = c->y; c->y = wc.y = y;
-	c->oldw = c->w; c->w = wc.width = w;
-	c->oldh = c->h; c->h = wc.height = h;
-	wc.border_width = c->bw;
-	XConfigureWindow(dpy, c->win, CWX|CWY|CWWidth|CWHeight|CWBorderWidth, &wc);
+	nc = selmon->clients;
+	for (n = 0, nc = nexttiled(nc); nc; nc = nexttiled(nc->next), n++);
+
+	c->oldx = c->x;
+	c->oldy = c->y;
+	c->oldw = c->w;
+	c->oldh = c->h;
+
+	c->x = wc.x = x;
+	c->y = wc.y = y;
+
+	lt = (Layout *)selmon->lt[selmon->sellt];
+	if (!c->isfloating && (n == 1 || lt->arrange == monocle)) {
+		c->w = wc.width = w + c->bw * 2;
+		c->h = wc.height = h + c->bw * 2;
+		wc.border_width = 0;
+	} else {
+		c->w = wc.width = w;
+		c->h = wc.height = h;
+		wc.border_width = c->bw;
+	}
+
+	mask = CWX|CWY|CWWidth|CWHeight|CWBorderWidth;
+	XConfigureWindow(dpy, c->win, mask, &wc);
 	configure(c);
 	XSync(dpy, False);
 }
