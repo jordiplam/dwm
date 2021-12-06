@@ -48,4 +48,7 @@ uninstall:
 	rm -f ${DESTDIR}${PREFIX}/bin/dwm\
 		${DESTDIR}${MANPREFIX}/man1/dwm.1
 
-.PHONY: all options clean dist install uninstall
+update:
+	git pull git://git.suckless.org/dwm master
+
+.PHONY: all options clean dist install uninstall update
