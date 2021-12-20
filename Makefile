@@ -49,6 +49,6 @@ uninstall:
 		${DESTDIR}${MANPREFIX}/man1/dwm.1
 
 update:
-	git pull git://git.suckless.org/dwm master
+	git pull --rebase git://git.suckless.org/dwm master
 
 .PHONY: all options clean dist install uninstall update
